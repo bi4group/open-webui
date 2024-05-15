@@ -306,7 +306,7 @@
 				</a>
 			</div>
 
-			<div class="px-2 flex justify-center mb-1">
+			<div class="px-2 flex justify-center">
 				<a
 					class="flex-grow flex space-x-3 rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
 					href="/documents"
@@ -334,6 +334,38 @@
 
 					<div class="flex self-center">
 						<div class=" self-center font-medium text-sm">{$i18n.t('Documents')}</div>
+					</div>
+				</a>
+			</div>
+
+			<div class="px-2 flex justify-center mb-1">
+				<a
+					class="flex-grow flex space-x-3 rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+					href="/dashboard"
+					on:click={() => {
+						selectedChatId = null;
+						chatId.set('');
+					}}
+				>
+					<div class="self-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="2"
+							class="w-4 h-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5ZM14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5ZM4 16a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3ZM14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6Z"
+							/>
+						</svg>
+					</div>
+
+					<div class="flex self-center">
+						<div class=" self-center font-medium text-sm">{$i18n.t('Adoption Dashboard')}</div>
 					</div>
 				</a>
 			</div>
