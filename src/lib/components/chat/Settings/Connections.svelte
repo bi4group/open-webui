@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { models, user } from '$lib/stores';
 	import { createEventDispatcher, onMount, getContext } from 'svelte';
+
 	const dispatch = createEventDispatcher();
 
 	import { getOllamaUrls, getOllamaVersion, updateOllamaUrls } from '$lib/apis/ollama';
@@ -10,6 +11,19 @@
 		updateOpenAIKeys,
 		updateOpenAIUrls
 	} from '$lib/apis/openai';
+
+	import {
+		getAzureOpenAIKeys,
+		getAzureOpenAIUrls,
+		getAzureOpenAIAPIVersions,
+		getAzureOpenAIDeploymentModelNames,
+
+		updateAzureOpenAIKeys,
+		updateAzureOpenAIUrls,
+		updateAzureOpenAIAPIVersions,
+		updateAzureOpenAIDeploymentModelNames
+	} from '$lib/apis/azureopenai';
+
 	import { toast } from 'svelte-sonner';
 
 	const i18n = getContext('i18n');
@@ -28,9 +42,29 @@
 
 	let showOpenAI = false;
 
+	let AZURE_OPENAI_API_KEY = '';
+	let AZURE_OPENAI_API_VERSION = '';
+	let AZURE_OPENAI_API_BASE_URL = '';
+
+	let AZURE_OPENAI_API_KEYS = [''];
+	let AZURE_OPENAI_API_VERSIONS = [''];
+	let AZURE_OPENAI_API_BASE_URLS = [''];
+	let AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES = [['']];
+
+	let showAzureOpenAI = false;
+
 	const updateOpenAIHandler = async () => {
 		OPENAI_API_BASE_URLS = await updateOpenAIUrls(localStorage.token, OPENAI_API_BASE_URLS);
 		OPENAI_API_KEYS = await updateOpenAIKeys(localStorage.token, OPENAI_API_KEYS);
+
+		await models.set(await getModels());
+	};
+
+	const updateAzureOpenAIHandler = async () => {
+		AZURE_OPENAI_API_BASE_URLS = await updateAzureOpenAIUrls(localStorage.token, AZURE_OPENAI_API_BASE_URLS);
+		AZURE_OPENAI_API_KEYS = await updateAzureOpenAIKeys(localStorage.token, AZURE_OPENAI_API_KEYS);
+		AZURE_OPENAI_API_VERSIONS = await updateAzureOpenAIAPIVersions(localStorage.token, AZURE_OPENAI_API_VERSIONS);
+		AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES = await updateAzureOpenAIDeploymentModelNames(localStorage.token, AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES);
 
 		await models.set(await getModels());
 	};
@@ -54,6 +88,11 @@
 			OLLAMA_BASE_URLS = await getOllamaUrls(localStorage.token);
 			OPENAI_API_BASE_URLS = await getOpenAIUrls(localStorage.token);
 			OPENAI_API_KEYS = await getOpenAIKeys(localStorage.token);
+
+			AZURE_OPENAI_API_BASE_URLS = await getAzureOpenAIUrls(localStorage.token);
+			AZURE_OPENAI_API_KEYS = await getAzureOpenAIKeys(localStorage.token);
+			AZURE_OPENAI_API_VERSIONS = await getAzureOpenAIAPIVersions(localStorage.token);
+			AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES = await getAzureOpenAIDeploymentModelNames(localStorage.token);
 		}
 	});
 </script>
@@ -61,9 +100,10 @@
 <form
 	class="flex flex-col h-full justify-between text-sm"
 	on:submit|preventDefault={() => {
-		updateOpenAIHandler();
-		dispatch('save');
-	}}
+        updateOpenAIHandler();
+        updateAzureOpenAIHandler();
+        dispatch('save');
+    }}
 >
 	<div class="  pr-1.5 overflow-y-scroll max-h-[22rem] space-y-3">
 		<div class=" space-y-3">
@@ -74,8 +114,8 @@
 						class=" text-xs font-medium text-gray-500"
 						type="button"
 						on:click={() => {
-							showOpenAI = !showOpenAI;
-						}}>{showOpenAI ? $i18n.t('Hide') : $i18n.t('Show')}</button
+                            showOpenAI = !showOpenAI;
+                        }}>{showOpenAI ? $i18n.t('Hide') : $i18n.t('Show')}</button
 					>
 				</div>
 
@@ -105,9 +145,9 @@
 										<button
 											class="px-1"
 											on:click={() => {
-												OPENAI_API_BASE_URLS = [...OPENAI_API_BASE_URLS, ''];
-												OPENAI_API_KEYS = [...OPENAI_API_KEYS, ''];
-											}}
+                                                OPENAI_API_BASE_URLS = [...OPENAI_API_BASE_URLS, ''];
+                                                OPENAI_API_KEYS = [...OPENAI_API_KEYS, ''];
+                                            }}
 											type="button"
 										>
 											<svg
@@ -125,11 +165,151 @@
 										<button
 											class="px-1"
 											on:click={() => {
-												OPENAI_API_BASE_URLS = OPENAI_API_BASE_URLS.filter(
-													(url, urlIdx) => idx !== urlIdx
-												);
-												OPENAI_API_KEYS = OPENAI_API_KEYS.filter((key, keyIdx) => idx !== keyIdx);
-											}}
+                                                OPENAI_API_BASE_URLS = OPENAI_API_BASE_URLS.filter(
+                                                    (url, urlIdx) => idx !== urlIdx
+                                                );
+                                                OPENAI_API_KEYS = OPENAI_API_KEYS.filter((key, keyIdx) => idx !== keyIdx);
+                                            }}
+											type="button"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 16 16"
+												fill="currentColor"
+												class="w-4 h-4"
+											>
+												<path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
+											</svg>
+										</button>
+									{/if}
+								</div>
+							</div>
+							<div class=" mb-1 text-xs text-gray-400 dark:text-gray-500">
+								{$i18n.t('WebUI will make requests to')}
+								<span class=" text-gray-200">'{url}/models'</span>
+							</div>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		</div>
+
+		<hr class=" dark:border-gray-700" />
+
+		<div class=" space-y-3">
+			<div class="mt-2 space-y-2 pr-1.5">
+				<div class="flex justify-between items-center text-sm">
+					<div class="  font-medium">{$i18n.t('AzureOpenAI API')}</div>
+					<button
+						class=" text-xs font-medium text-gray-500"
+						type="button"
+						on:click={() => {
+                            showAzureOpenAI = !showAzureOpenAI;
+                        }}>{showAzureOpenAI ? $i18n.t('Hide') : $i18n.t('Show')}</button
+					>
+				</div>
+
+				{#if showAzureOpenAI}
+					<div class="flex flex-col gap-1">
+						{#each AZURE_OPENAI_API_BASE_URLS as url, idx}
+							<div class="flex w-full gap-2">
+								<div class="flex-1">
+									<input
+										class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+										placeholder={$i18n.t('Endpoint URL')}
+										bind:value={url}
+										on:input={(event) => {
+                                            if (event.target.value.trim() === '') {
+                                                AZURE_OPENAI_API_BASE_URLS[idx] = 'https://your_account_name.openai.azure.com/';
+                                            }
+                                        }}
+										autocomplete="off"
+									/>
+								</div>
+
+								<div class="flex-1">
+									<input
+										class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+										placeholder={$i18n.t('Key')}
+										bind:value={AZURE_OPENAI_API_KEYS[idx]}
+										autocomplete="off"
+									/>
+								</div>
+								<div class="flex-1">
+									<input
+										class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+										placeholder={$i18n.t('API Version')}
+										bind:value={AZURE_OPENAI_API_VERSIONS[idx]}
+										on:input={(event) => {
+                                            if (event.target.value.trim() === '') {
+                                                AZURE_OPENAI_API_VERSIONS[idx] = '2024-02-01';
+                                            }
+                                        }}
+										autocomplete="off"
+									/>
+								</div>
+								<div class="flex-1">
+									<!-- Add input for deployment models -->
+									{#each AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES[idx] as modelName, modelIdx}
+										<div class="relative">
+											<input
+												class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+												placeholder={$i18n.t('Deploy Name')}
+												bind:value={modelName}
+												autocomplete="off" />
+											{#if modelIdx > 0}
+												<button
+													class="absolute right-0 top-0 -mt-1 mr-1"
+													on:click={() => {
+                                                AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES[idx] = AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES[idx].filter((_, index) => index !== modelIdx);
+                                            }}
+													type="button">
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														viewBox="0 0 16 16"
+														fill="currentColor"
+														class="w-4 h-4">
+														<path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
+													</svg>
+												</button>
+											{/if}
+										</div>
+									{/each}
+								</div>
+								<div class="self-center flex items-center">
+									{#if idx === 0}
+										<button
+											class="px-1"
+											on:click={() => {
+                                                AZURE_OPENAI_API_BASE_URLS = [...AZURE_OPENAI_API_BASE_URLS, ''];
+                                                AZURE_OPENAI_API_KEYS = [...AZURE_OPENAI_API_KEYS, ''];
+                                                AZURE_OPENAI_API_VERSIONS = [...AZURE_OPENAI_API_VERSIONS, ''];
+                                                AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES = [...AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES, ['']];
+                                            }}
+											type="button"
+										>
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												viewBox="0 0 16 16"
+												fill="currentColor"
+												class="w-4 h-4"
+											>
+												<path
+													d="M8.75 3.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5v-3.5Z"
+												/>
+											</svg>
+										</button>
+									{:else}
+										<button
+											class="px-1"
+											on:click={() => {
+                                                AZURE_OPENAI_API_BASE_URLS = AZURE_OPENAI_API_BASE_URLS.filter(
+                                                    (url, urlIdx) => idx !== urlIdx
+                                                );
+                                                AZURE_OPENAI_API_KEYS = AZURE_OPENAI_API_KEYS.filter((key, keyIdx) => idx !== keyIdx);
+                                                AZURE_OPENAI_API_VERSIONS = AZURE_OPENAI_API_VERSIONS.filter((key, versionIdx) => idx !== versionIdx);
+                                                AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES = AZURE_OPENAI_API_DEPLOYMENT_MODEL_NAMES.filter((model, modelIdx) => idx !== modelIdx);
+                                            }}
 											type="button"
 										>
 											<svg
@@ -173,8 +353,8 @@
 									<button
 										class="px-1"
 										on:click={() => {
-											OLLAMA_BASE_URLS = [...OLLAMA_BASE_URLS, ''];
-										}}
+                                            OLLAMA_BASE_URLS = [...OLLAMA_BASE_URLS, ''];
+                                        }}
 										type="button"
 									>
 										<svg
@@ -192,8 +372,8 @@
 									<button
 										class="px-1"
 										on:click={() => {
-											OLLAMA_BASE_URLS = OLLAMA_BASE_URLS.filter((url, urlIdx) => idx !== urlIdx);
-										}}
+                                            OLLAMA_BASE_URLS = OLLAMA_BASE_URLS.filter((url, urlIdx) => idx !== urlIdx);
+                                        }}
 										type="button"
 									>
 										<svg
@@ -215,8 +395,8 @@
 					<button
 						class="p-2.5 bg-gray-200 hover:bg-gray-300 dark:bg-gray-850 dark:hover:bg-gray-800 rounded-lg transition"
 						on:click={() => {
-							updateOllamaUrlsHandler();
-						}}
+                            updateOllamaUrlsHandler();
+                        }}
 						type="button"
 					>
 						<svg

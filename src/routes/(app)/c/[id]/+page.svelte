@@ -40,6 +40,7 @@
 		LITELLM_API_BASE_URL,
 		OPENAI_API_BASE_URL,
 		OLLAMA_API_BASE_URL,
+		AZURE_OPENAI_API_BASE_URL,
 		WEBUI_BASE_URL
 	} from '$lib/constants';
 	import { createOpenAITextStream } from '$lib/apis/streaming';
@@ -621,6 +622,8 @@
 			},
 			model?.source?.toLowerCase() === 'litellm'
 				? `${LITELLM_API_BASE_URL}/v1`
+				: model?.azure ?? false
+				? `${AZURE_OPENAI_API_BASE_URL}`
 				: `${OPENAI_API_BASE_URL}`
 		);
 
@@ -809,6 +812,8 @@
 				titleModel?.external ?? false
 					? titleModel?.source?.toLowerCase() === 'litellm'
 						? `${LITELLM_API_BASE_URL}/v1`
+						: titleModel?.azure ?? false
+						? `${AZURE_OPENAI_API_BASE_URL}`
 						: `${OPENAI_API_BASE_URL}`
 					: `${OLLAMA_API_BASE_URL}/v1`
 			);
