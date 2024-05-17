@@ -56,7 +56,7 @@
 	let currentRequestId = null;
 
 	// let chatId = $page.params.id;
-	let showModelSelector = true;
+	let showModelSelector = false;
 	let selectedModels = [''];
 	let atSelectedModel = '';
 

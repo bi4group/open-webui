@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--aiaiai-background: #f2efea;
+	--aiaiai-sidebar-background: #fff;
+	--aiaiai-hover-background: #fff2df;
+	--aiaiai-text-color: #666;
+}
+
+@layer base {
+	html,
+	pre {
+		font-family: -apple-system, 'Noto Sans', 'Arimo', ui-sans-serif, system-ui, 'Segoe UI', Roboto,
+			Ubuntu, Cantarell, 'Noto Sans', sans-serif, 'Helvetica Neue', Arial, 'Apple Color Emoji',
+			'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	}
+
+	pre {
+		white-space: pre-wrap;
+	}
+}
+
+.bg-white {
+	background-color: var(--aiaiai-background);
+}
+
+form.bg-white {
+	background-color: var(--aiaiai-sidebar-background);
+	border: 1px solid #bbb;
+}
+
+#sidebar {
+	background-color: var(--aiaiai-sidebar-background);
+}
+
+#chat-search {
+	background-color: var(--aiaiai-sidebar-background);
+	border-radius: 30px;
+	border: 1px solid #bbb;
+}
+
+#chat-search > * {
+	background-color: transparent;
+}
+
+.bg-gray-200,
+.hover\:bg-gray-100:hover,
+.group-hover\:bg-gray-100:hover,
+.group:hover .group-hover\:bg-gray-100 {
+	background-color: var(--aiaiai-hover-background) !important;
+}
+
+.from-gray-200, .from-gray-100 {
+	--tw-gradient-from: var(--aiaiai-hover-background) var(--tw-gradient-from-position);
+}
+
+.text-gray-400 {
+	color: var(--aiaiai-text-color);
+}
