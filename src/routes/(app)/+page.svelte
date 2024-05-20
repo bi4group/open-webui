@@ -45,7 +45,7 @@
 	let messagesContainerElement: HTMLDivElement;
 	let currentRequestId = null;
 
-	let showModelSelector = true;
+	let showModelSelector = false;
 
 	let selectedModels = [''];
 	let atSelectedModel = '';
@@ -127,6 +127,10 @@
 			selectedModels = $config?.default_models.split(',');
 		} else {
 			selectedModels = [''];
+		}
+
+		if (selectedModels.length === 0 || selectedModels[0] === '') {
+			selectedModels[0] = $models[0].name;
 		}
 
 		if ($page.url.searchParams.get('q')) {
