@@ -17,7 +17,6 @@ import shutil
 from secrets import token_bytes
 from constants import ERROR_MESSAGES
 
-
 ####################################
 # Load .env file
 ####################################
@@ -28,7 +27,6 @@ try:
     load_dotenv(find_dotenv("../.env"))
 except ImportError:
     print("dotenv not installed, skipping...")
-
 
 ####################################
 # LOGGING
@@ -56,6 +54,7 @@ log_sources = [
     "MODELS",
     "OLLAMA",
     "OPENAI",
+    "POWERBI",
     "AZUREOPENAI",
     "RAG",
     "WEBHOOK",
@@ -72,7 +71,6 @@ for source in log_sources:
 
 log.setLevel(SRC_LOG_LEVELS["CONFIG"])
 
-
 WEBUI_NAME = os.environ.get("WEBUI_NAME", "AIAIAI")
 if WEBUI_NAME != "AIAIAI":
     WEBUI_NAME += " (by AIAIAI)"
@@ -80,7 +78,6 @@ if WEBUI_NAME != "AIAIAI":
 WEBUI_URL = os.environ.get("WEBUI_URL", "http://localhost:3000")
 
 WEBUI_FAVICON_URL = "https://openwebui.com/favicon.png"
-
 
 ####################################
 # ENV (dev,test,prod)
@@ -152,9 +149,7 @@ for version in soup.find_all("h2"):
 
     changelog_json[version_number] = version_data
 
-
 CHANGELOG = changelog_json
-
 
 ####################################
 # WEBUI_VERSION
@@ -170,7 +165,6 @@ WEBUI_AUTH = os.environ.get("WEBUI_AUTH", "True").lower() == "true"
 WEBUI_AUTH_TRUSTED_EMAIL_HEADER = os.environ.get(
     "WEBUI_AUTH_TRUSTED_EMAIL_HEADER", None
 )
-
 
 ####################################
 # DATA/FRONTEND BUILD DIR
@@ -226,7 +220,6 @@ if CUSTOM_NAME:
         log.exception(e)
         pass
 
-
 ####################################
 # File Upload DIR
 ####################################
@@ -234,14 +227,12 @@ if CUSTOM_NAME:
 UPLOAD_DIR = f"{DATA_DIR}/uploads"
 Path(UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
 
-
 ####################################
 # Cache DIR
 ####################################
 
 CACHE_DIR = f"{DATA_DIR}/cache"
 Path(CACHE_DIR).mkdir(parents=True, exist_ok=True)
-
 
 ####################################
 # Docs DIR
@@ -283,7 +274,6 @@ if not os.path.exists(LITELLM_CONFIG_PATH):
     create_config_file(LITELLM_CONFIG_PATH)
     log.info("Config file created successfully.")
 
-
 ####################################
 # OLLAMA_BASE_URL
 ####################################
@@ -314,12 +304,10 @@ if ENV == "prod":
     elif K8S_FLAG:
         OLLAMA_BASE_URL = "http://ollama-service.open-webui.svc.cluster.local:11434"
 
-
 OLLAMA_BASE_URLS = os.environ.get("OLLAMA_BASE_URLS", "")
 OLLAMA_BASE_URLS = OLLAMA_BASE_URLS if OLLAMA_BASE_URLS != "" else OLLAMA_BASE_URL
 
 OLLAMA_BASE_URLS = [url.strip() for url in OLLAMA_BASE_URLS.split(";")]
-
 
 ####################################
 # OPENAI_API
@@ -328,7 +316,6 @@ OLLAMA_BASE_URLS = [url.strip() for url in OLLAMA_BASE_URLS.split(";")]
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_API_BASE_URL = os.environ.get("OPENAI_API_BASE_URL", "")
 
-
 if OPENAI_API_BASE_URL == "":
     OPENAI_API_BASE_URL = "https://api.openai.com/v1"
 
@@ -336,7 +323,6 @@ OPENAI_API_KEYS = os.environ.get("OPENAI_API_KEYS", "")
 OPENAI_API_KEYS = OPENAI_API_KEYS if OPENAI_API_KEYS != "" else OPENAI_API_KEY
 
 OPENAI_API_KEYS = [url.strip() for url in OPENAI_API_KEYS.split(";")]
-
 
 OPENAI_API_BASE_URLS = os.environ.get("OPENAI_API_BASE_URLS", "")
 OPENAI_API_BASE_URLS = (
@@ -359,7 +345,6 @@ except:
 
 OPENAI_API_BASE_URL = "https://api.openai.com/v1"
 
-
 ####################################
 # AZURE_OPENAI_API
 ####################################
@@ -368,7 +353,6 @@ AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY", "")
 AZURE_OPENAI_API_BASE_URL = os.environ.get("AZURE_OPENAI_API_BASE_URL", "https://your_account_name.openai.azure.com/")
 AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-01")
 AZURE_OPENAI_DEPLOYMENT_MODEL_NAME = os.environ.get("AZURE_OPENAI_DEPLOYMENT_MODEL_NAME", "")
-
 
 AZURE_OPENAI_API_KEYS = os.environ.get("AZURE_OPENAI_API_KEYS", "")
 AZURE_OPENAI_API_KEYS = AZURE_OPENAI_API_KEYS if AZURE_OPENAI_API_KEYS != "" else AZURE_OPENAI_API_KEY
@@ -403,7 +387,6 @@ AZURE_OPENAI_DEPLOYMENT_MODEL_NAMES = [
     for url in AZURE_OPENAI_DEPLOYMENT_MODEL_NAMES.split(";")
 ]
 
-
 ####################################
 # WEBUI
 ####################################
@@ -415,12 +398,11 @@ ENABLE_SIGNUP = (
 )
 DEFAULT_MODELS = os.environ.get("DEFAULT_MODELS", None)
 
-
 DEFAULT_PROMPT_SUGGESTIONS = (
     CONFIG_DATA["ui"]["prompt_suggestions"]
     if "ui" in CONFIG_DATA
-    and "prompt_suggestions" in CONFIG_DATA["ui"]
-    and type(CONFIG_DATA["ui"]["prompt_suggestions"]) is list
+       and "prompt_suggestions" in CONFIG_DATA["ui"]
+       and type(CONFIG_DATA["ui"]["prompt_suggestions"]) is list
     else [
         {
             "title": ["Help me study", "vocabulary for a college entrance exam"],
@@ -452,11 +434,10 @@ DEFAULT_PROMPT_SUGGESTIONS = (
     ]
 )
 
-
 DEFAULT_USER_ROLE = os.getenv("DEFAULT_USER_ROLE", "pending")
 
 USER_PERMISSIONS_CHAT_DELETION = (
-    os.environ.get("USER_PERMISSIONS_CHAT_DELETION", "True").lower() == "true"
+        os.environ.get("USER_PERMISSIONS_CHAT_DELETION", "True").lower() == "true"
 )
 
 USER_PERMISSIONS = {"chat": {"deletion": USER_PERMISSIONS_CHAT_DELETION}}
@@ -511,12 +492,11 @@ RAG_TOP_K = int(os.environ.get("RAG_TOP_K", "5"))
 RAG_RELEVANCE_THRESHOLD = float(os.environ.get("RAG_RELEVANCE_THRESHOLD", "0.0"))
 
 ENABLE_RAG_HYBRID_SEARCH = (
-    os.environ.get("ENABLE_RAG_HYBRID_SEARCH", "").lower() == "true"
+        os.environ.get("ENABLE_RAG_HYBRID_SEARCH", "").lower() == "true"
 )
 
-
 ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION = (
-    os.environ.get("ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION", "True").lower() == "true"
+        os.environ.get("ENABLE_RAG_WEB_LOADER_SSL_VERIFICATION", "True").lower() == "true"
 )
 
 RAG_EMBEDDING_ENGINE = os.environ.get("RAG_EMBEDDING_ENGINE", "")
@@ -529,11 +509,11 @@ RAG_EMBEDDING_MODEL = os.environ.get(
 log.info(f"Embedding model set: {RAG_EMBEDDING_MODEL}"),
 
 RAG_EMBEDDING_MODEL_AUTO_UPDATE = (
-    os.environ.get("RAG_EMBEDDING_MODEL_AUTO_UPDATE", "").lower() == "true"
+        os.environ.get("RAG_EMBEDDING_MODEL_AUTO_UPDATE", "").lower() == "true"
 )
 
 RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE = (
-    os.environ.get("RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE", "").lower() == "true"
+        os.environ.get("RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE", "").lower() == "true"
 )
 
 RAG_RERANKING_MODEL = os.environ.get("RAG_RERANKING_MODEL", "")
@@ -541,13 +521,12 @@ if not RAG_RERANKING_MODEL == "":
     log.info(f"Reranking model set: {RAG_RERANKING_MODEL}"),
 
 RAG_RERANKING_MODEL_AUTO_UPDATE = (
-    os.environ.get("RAG_RERANKING_MODEL_AUTO_UPDATE", "").lower() == "true"
+        os.environ.get("RAG_RERANKING_MODEL_AUTO_UPDATE", "").lower() == "true"
 )
 
 RAG_RERANKING_MODEL_TRUST_REMOTE_CODE = (
-    os.environ.get("RAG_RERANKING_MODEL_TRUST_REMOTE_CODE", "").lower() == "true"
+        os.environ.get("RAG_RERANKING_MODEL_TRUST_REMOTE_CODE", "").lower() == "true"
 )
-
 
 if CHROMA_HTTP_HOST != "":
     CHROMA_CLIENT = chromadb.HttpClient(
@@ -567,7 +546,6 @@ else:
         database=CHROMA_DATABASE,
     )
 
-
 # device type embedding models - "cpu" (default), "cuda" (nvidia gpu required) or "mps" (apple silicon) - choosing this right can lead to better performance
 USE_CUDA = os.environ.get("USE_CUDA_DOCKER", "false")
 
@@ -575,7 +553,6 @@ if USE_CUDA.lower() == "true":
     DEVICE_TYPE = "cuda"
 else:
     DEVICE_TYPE = "cpu"
-
 
 CHUNK_SIZE = int(os.environ.get("CHUNK_SIZE", "1500"))
 CHUNK_OVERLAP = int(os.environ.get("CHUNK_OVERLAP", "100"))
@@ -600,7 +577,7 @@ RAG_OPENAI_API_BASE_URL = os.getenv("RAG_OPENAI_API_BASE_URL", OPENAI_API_BASE_U
 RAG_OPENAI_API_KEY = os.getenv("RAG_OPENAI_API_KEY", OPENAI_API_KEY)
 
 ENABLE_RAG_LOCAL_WEB_FETCH = (
-    os.getenv("ENABLE_RAG_LOCAL_WEB_FETCH", "False").lower() == "true"
+        os.getenv("ENABLE_RAG_LOCAL_WEB_FETCH", "False").lower() == "true"
 )
 
 YOUTUBE_LOADER_LANGUAGE = os.getenv("YOUTUBE_LOADER_LANGUAGE", "en").split(",")
@@ -612,9 +589,8 @@ YOUTUBE_LOADER_LANGUAGE = os.getenv("YOUTUBE_LOADER_LANGUAGE", "en").split(",")
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
 WHISPER_MODEL_DIR = os.getenv("WHISPER_MODEL_DIR", f"{CACHE_DIR}/whisper/models")
 WHISPER_MODEL_AUTO_UPDATE = (
-    os.environ.get("WHISPER_MODEL_AUTO_UPDATE", "").lower() == "true"
+        os.environ.get("WHISPER_MODEL_AUTO_UPDATE", "").lower() == "true"
 )
-
 
 ####################################
 # Images
@@ -623,7 +599,7 @@ WHISPER_MODEL_AUTO_UPDATE = (
 IMAGE_GENERATION_ENGINE = os.getenv("IMAGE_GENERATION_ENGINE", "")
 
 ENABLE_IMAGE_GENERATION = (
-    os.environ.get("ENABLE_IMAGE_GENERATION", "").lower() == "true"
+        os.environ.get("ENABLE_IMAGE_GENERATION", "").lower() == "true"
 )
 AUTOMATIC1111_BASE_URL = os.getenv("AUTOMATIC1111_BASE_URL", "")
 
@@ -661,9 +637,17 @@ if LITELLM_PROXY_PORT < 0 or LITELLM_PROXY_PORT > 65535:
     raise ValueError("Invalid port number for LITELLM_PROXY_PORT")
 LITELLM_PROXY_HOST = os.getenv("LITELLM_PROXY_HOST", "127.0.0.1")
 
-
 ####################################
 # Database
 ####################################
 
 DATABASE_URL = os.environ.get("DATABASE_URL", f"sqlite:///{DATA_DIR}/webui.db")
+
+####################################
+# PowerBI
+####################################
+AZURE_TENANT_ID = os.environ.get("AZURE_TENANT_ID", "")
+POWERBI_REPORT_ID = os.environ.get("POWERBI_REPORT_ID", "")
+POWERBI_WORKSPACE_ID = os.environ.get("POWERBI_WORKSPACE_ID", "")
+POWERBI_CLIENT_ID = os.environ.get("POWERBI_CLIENT_ID", "")
+POWERBI_CLIENT_SECRET = os.environ.get("POWERBI_CLIENT_SECRET", "")
