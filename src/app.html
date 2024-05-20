@@ -32,7 +32,7 @@
 					systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 					document.documentElement.classList.add(systemTheme ? 'dark' : 'light');
 				} else {
-					document.documentElement.classList.add('dark');
+					document.documentElement.classList.add('light');
 				}
 
 				window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
