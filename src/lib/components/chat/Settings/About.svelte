@@ -47,11 +47,10 @@
 		<div>
 			<div class=" mb-2.5 text-sm font-medium flex space-x-2 items-center">
 				<div>
-					{$WEBUI_NAME}
-					{$i18n.t('Version')}
+					Nucleoo (by {$WEBUI_NAME})
 				</div>
 			</div>
-			<div class="flex w-full justify-between items-center">
+			<div class="hidden flex w-full justify-between items-center">
 				<div class="flex flex-col text-xs text-gray-700 dark:text-gray-200">
 					<div class="flex gap-1">
 						<Tooltip content={WEBUI_VERSION === '0.1.117' ? "🪖 We're just getting started." : ''}>
@@ -106,7 +105,7 @@
 
 		<hr class=" dark:border-gray-700" />
 
-		<div class="flex space-x-1">
+		<div class="hidden flex space-x-1">
 			<a href="https://discord.gg/5rJgQTnV4s" target="_blank">
 				<img
 					alt="Discord"
@@ -130,9 +129,14 @@
 		</div>
 
 		<div class="mt-2 text-xs text-gray-400 dark:text-gray-500">
+			© 2024 -
 			{#if !$WEBUI_NAME.includes('Open WebUI')}
-				<span class=" text-gray-500 dark:text-gray-300 font-medium">{$WEBUI_NAME}</span> -
-			{/if}{$i18n.t('Created by')}
+				By <a
+				class=" text-gray-500 dark:text-gray-300 font-medium"
+				href="https://aiaiai.eu"
+				target="_blank"
+			>{$WEBUI_NAME}</a>
+			{/if} and based in the work of
 			<a
 				class=" text-gray-500 dark:text-gray-300 font-medium"
 				href="https://github.com/tjbck"
