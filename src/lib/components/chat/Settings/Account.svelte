@@ -230,13 +230,13 @@
 			</div>
 		</div>
 
+		<hr class=" dark:border-gray-700 my-4" />
+
 		<div class="py-0.5">
 			<UpdatePassword />
 		</div>
 
-		<hr class=" dark:border-gray-700 my-4" />
-
-		<div class="flex justify-between items-center text-sm">
+		<div class="hidden flex justify-between items-center text-sm">
 			<div class="  font-medium">{$i18n.t('API keys')}</div>
 			<button
 				class=" text-xs font-medium text-gray-500"

@@ -131,9 +131,9 @@
 <div class="flex flex-col h-full justify-between text-sm">
 	<div class="  pr-1.5 overflow-y-scroll max-h-[22rem]">
 		<div class="">
-			<div class=" mb-1 text-sm font-medium">{$i18n.t('WebUI Settings')}</div>
+			<div class=" mb-1 text-sm font-medium">{$i18n.t('Settings')}</div>
 
-			<div class="flex w-full justify-between">
+			<div class="hidden flex w-full justify-between">
 				<div class=" self-center text-xs font-medium">{$i18n.t('Theme')}</div>
 				<div class="flex items-center relative">
 					<select
@@ -170,7 +170,7 @@
 				</div>
 			</div>
 			{#if $i18n.language === 'en-US'}
-				<div class="mb-2 text-xs text-gray-400 dark:text-gray-500">
+				<div class="hidden mb-2 text-xs text-gray-400 dark:text-gray-500">
 					Couldn't find your language?
 					<a
 						class=" text-gray-300 font-medium underline"
