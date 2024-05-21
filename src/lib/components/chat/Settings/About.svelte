@@ -130,13 +130,13 @@
 
 		<div class="mt-2 text-xs text-gray-400 dark:text-gray-500">
 			© 2024 -
-			{#if !$WEBUI_NAME.includes('Open WebUI')}
-				By <a
+			By
+			<a
 				class=" text-gray-500 dark:text-gray-300 font-medium"
 				href="https://aiaiai.eu"
 				target="_blank"
-			>{$WEBUI_NAME}</a>
-			{/if} and based in the work of
+			>AIAIAI</a>
+			 and based in the work of
 			<a
 				class=" text-gray-500 dark:text-gray-300 font-medium"
 				href="https://github.com/tjbck"
