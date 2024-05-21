@@ -25,6 +25,9 @@
 					panes: {
 						pageNavigation: {
 							visible: false
+						},
+						filters: {
+							visible: false
 						}
 					}
 				}
@@ -54,12 +57,12 @@
 
 <div class="min-h-screen max-h-[100dvh] w-full flex justify-center dark:text-white">
 	<div class="flex flex-col justify-start w-full overflow-y-auto">
-		<div class="max-w-2xl mx-auto w-full px-3 md:px-0 my-10">
+		<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
 			<div class=" text-2xl font-semibold mb-3">{$i18n.t('Adoption Dashboard')}</div>
 			<hr class=" dark:border-gray-700 my-2.5" />
 		</div>
-		<div class=" mx-auto w-full px-3 md:px-0">
-			<div class="mx-auto w-full px-3 md:px-0">
+		<div class=" mx-auto w-full px-5">
+			<div class="mx-auto w-full">
 				<div
 					id="embedContainer"
 					class="h-[calc(100vh-11rem)] w-full"
