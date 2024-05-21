@@ -337,6 +337,43 @@
 					</div>
 				</a>
 			</div>
+
+			<div class="px-2 flex justify-center mb-1">
+				<a
+					class="flex-grow flex space-x-3 rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+					href="/dashboard"
+					on:click={() => {
+						selectedChatId = null;
+						chatId.set('');
+					}}
+				>
+					<div class="self-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="2"
+							stroke="currentColor"
+							class="w-4 h-4"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
+							/>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
+							/>
+						</svg>
+					</div>
+
+					<div class="flex self-center">
+						<div class=" self-center font-medium text-sm">{$i18n.t('Adoption Dashboard')}</div>
+					</div>
+				</a>
+			</div>
 		{/if}
 
 		<div class="relative flex flex-col flex-1 overflow-y-auto">

@@ -60,3 +60,7 @@ form.bg-white {
 .text-gray-400 {
 	color: var(--aiaiai-text-color);
 }
+
+.max-w-8xl {
+	max-width: 90rem;
+}

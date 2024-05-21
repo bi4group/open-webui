@@ -7,6 +7,7 @@ from apps.web.routers import (
     chats,
     documents,
     modelfiles,
+    powerbi,
     prompts,
     configs,
     utils,
@@ -51,6 +52,7 @@ app.include_router(chats.router, prefix="/chats", tags=["chats"])
 app.include_router(documents.router, prefix="/documents", tags=["documents"])
 app.include_router(modelfiles.router, prefix="/modelfiles", tags=["modelfiles"])
 app.include_router(prompts.router, prefix="/prompts", tags=["prompts"])
+app.include_router(powerbi.router, prefix="/powerbi", tags=["powerbi"])
 
 app.include_router(configs.router, prefix="/configs", tags=["configs"])
 app.include_router(utils.router, prefix="/utils", tags=["utils"])
