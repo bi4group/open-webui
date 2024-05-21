@@ -47,7 +47,7 @@
 		<div>
 			<div class=" mb-2.5 text-sm font-medium flex space-x-2 items-center">
 				<div>
-					Nucleoo (by {$WEBUI_NAME})
+					{$WEBUI_NAME}
 				</div>
 			</div>
 			<div class="hidden flex w-full justify-between items-center">
