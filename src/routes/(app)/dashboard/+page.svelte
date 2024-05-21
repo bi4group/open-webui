@@ -6,37 +6,42 @@
 	import { Report, service, factories, models } from 'powerbi-client';
 
 	const i18n = getContext('i18n');
+	let api_error = false;
 
 	onMount(async () => {
-		const embedConfig = await getPowerBIEmbedConfig();
+		try {
+			const embedConfig = await getPowerBIEmbedConfig();
 
-		// Set up the configuration object that determines what to embed and how to embed it.
-		let embedConfiguration = {
-			type: 'report',
-			tokenType: models.TokenType.Embed,
-			accessToken: embedConfig.accessToken,
-			id: embedConfig.reportId,
-			embedUrl: embedConfig.embedUrl,
-			pageView: 'fitToWidth',
-			settings: {
-        background: models.BackgroundType.Transparent,
-        panes: {
-          pageNavigation: {
-            visible: false
-          }
-        }
+			// Set up the configuration object that determines what to embed and how to embed it.
+			let embedConfiguration = {
+				type: 'report',
+				tokenType: models.TokenType.Embed,
+				accessToken: embedConfig.accessToken,
+				id: embedConfig.reportId,
+				embedUrl: embedConfig.embedUrl,
+				pageView: 'fitToWidth',
+				settings: {
+					background: models.BackgroundType.Transparent,
+					panes: {
+						pageNavigation: {
+							visible: false
+						}
+					}
+				}
+			};
+
+			// Get a reference to the HTML element that contains the embedded report.
+			let embedContainer = document.getElementById('embedContainer');
+
+			// Create a new service object
+			let reportService = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
+
+			// Embed the report.
+			if (embedContainer) {
+				new Report(reportService, embedContainer, embedConfiguration);
 			}
-		};
-
-		// Get a reference to the HTML element that contains the embedded report.
-		let embedContainer = document.getElementById('embedContainer');
-
-		// Create a new service object
-		let reportService = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
-
-		// Embed the report.
-		if (embedContainer) {
-			new Report(reportService, embedContainer, embedConfiguration);
+		} catch (error) {
+			api_error = true;
 		}
 	});
 </script>
@@ -58,7 +63,13 @@
 				<div
 					id="embedContainer"
 					class="h-[calc(100vh-11rem)] w-full"
-				/>
+				>
+					{#if api_error}
+						<div class="flex justify-center mt-5">
+							<div class="text-red-500">{$i18n.t('Failed to load the report')}</div>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
