@@ -34,11 +34,8 @@
 		// Create a new service object
 		let reportService = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
 
-		console.log(embedContainer);
-
 		// Embed the report.
 		if (embedContainer) {
-			console.log('yes');
 			new Report(reportService, embedContainer, embedConfiguration);
 		}
 	});
