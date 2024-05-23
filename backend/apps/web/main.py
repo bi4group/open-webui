@@ -6,6 +6,7 @@ from apps.web.routers import (
     users,
     chats,
     documents,
+    meetings,
     modelfiles,
     powerbi,
     prompts,
@@ -53,6 +54,7 @@ app.include_router(documents.router, prefix="/documents", tags=["documents"])
 app.include_router(modelfiles.router, prefix="/modelfiles", tags=["modelfiles"])
 app.include_router(prompts.router, prefix="/prompts", tags=["prompts"])
 app.include_router(powerbi.router, prefix="/powerbi", tags=["powerbi"])
+app.include_router(meetings.router, prefix="/meetings", tags=["meetings"])
 
 app.include_router(configs.router, prefix="/configs", tags=["configs"])
 app.include_router(utils.router, prefix="/utils", tags=["utils"])

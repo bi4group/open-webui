@@ -1,0 +1,174 @@
+<script lang="ts">
+	import { marked } from 'marked';
+	import { WEBUI_NAME, user } from '$lib/stores';
+	import { getContext, onMount } from 'svelte';
+	import { getMeetingsList } from '$lib/apis/meetings';
+	import { getCurrentUserFirefliesToken } from '$lib/apis/users';
+
+	const i18n = getContext('i18n');
+
+	let meetingList = [];
+	let selectedMeeting = '';
+	let api_error = false;
+	let missing_token = false;
+
+	onMount(async () => {
+		try {
+			const has_token = await getCurrentUserFirefliesToken(localStorage.token);
+
+			if (!has_token) {
+				missing_token = true
+				return
+			}
+
+			const res = await getMeetingsList();
+
+			if (res) {
+				meetingList = res.data.transcripts
+				selectedMeeting = res.data.transcripts[0]
+
+				// Format the date of each meeting
+				meetingList.forEach((meeting) => {
+					const date = new Date(meeting.dateString)
+					meeting.dateString = date.toLocaleDateString(i18n.locale, {
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric'
+					})
+				})
+
+				// The summary overview comes as markdown, so we need to convert it to HTML
+				meetingList.forEach((meeting) => {
+					// Replace newlines with <br> tags
+					meeting.summary.overview = meeting.summary.overview.replace(/\n/g, '<br/>')
+					meeting.summary.shorthand_bullet = meeting.summary.shorthand_bullet.replace(/\n/g, '<br/>')
+
+					// Set options for marked
+					marked.use({
+						gfm: true,
+						breaks: true
+					})
+
+					meeting.summary.overview = marked(meeting.summary.overview)
+					meeting.summary.shorthand_bullet = marked(meeting.summary.shorthand_bullet)
+
+					// Obviously the API wouldn't return the participants in a proper format, so we have
+					// to do funky things ourselves
+					// The first string always contains a list of participants, so first of all let's split it
+					const participants = meeting.participants[0].split(',')
+
+					// Preserve unique participants
+					meeting.participants = new Set([...participants, ...meeting.participants.slice(1)])
+				})
+			}
+		} catch (error) {
+			console.log(error)
+			api_error = true
+		}
+	});
+
+	const getMeetingDetails = async (meeting) => {
+		try {
+			selectedMeeting = meeting
+			console.log(meeting)
+		} catch (error) {
+			api_error = true
+		}
+	}
+</script>
+
+<svelte:head>
+	<title>{$i18n.t('Meetings')} | {$WEBUI_NAME}</title>
+</svelte:head>
+
+<div class="min-h-screen max-h-[100dvh] w-full flex justify-center dark:text-white">
+	{#if missing_token}
+		<div class="max-w-8xl mx-auto w-full px-7 mt-10">
+			<p>{$i18n.t('You need to connect your Fireflies account to view your meetings. Upload your API token in your Account settings.')}</p>
+		</div>
+	{:else}
+		<div class="flex flex-col justify-start w-1/3 overflow-y-auto pl-7">
+			<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
+				<h1 class="text-3xl font-bold">{$i18n.t('Meetings')}</h1>
+			</div>
+
+			{#if api_error}
+				<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
+					<p>{$i18n.t('An error occurred while fetching the meetings list.')}</p>
+				</div>
+			{/if}
+
+			{#if !api_error && meetingList.length === 0}
+				<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
+					<p>{$i18n.t('No meetings found.')}</p>
+				</div>
+			{/if}
+
+			{#if !api_error && meetingList.length > 0}
+				<div class="flex flex-col gap-2 w-fit px-3 md:px-0 mt-3">
+					{#each meetingList as meeting}
+							<button
+								class="text-lg text-start font-bold rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
+								on:click={() => {
+									getMeetingDetails(meeting)
+								}}
+							>{meeting.title}</button>
+					{/each}
+				</div>
+			{/if}
+		</div>
+
+		<div class="flex flex-col justify-start w-2/3 overflow-y-auto">
+			{#if !api_error && meetingList.length > 0}
+			<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
+				<div class="flex flex-col">
+					<h1 class="text-3xl font-bold">{$i18n.t('Meeting summary')}</h1>
+					<span class="text-xl">{selectedMeeting.title}</span>
+				</div>
+
+				<div class="flex flex-col mt-5 gap-7 pb-12 pr-12">
+					<div class="flex flex-row gap-20">
+						<div class="flex flex-col">
+							<span class="text-lg">{$i18n.t('Date')}</span>
+							<span class="text-sm font-bold">{selectedMeeting.dateString}</span>
+						</div>
+						<div class="flex flex-col">
+							<span class="text-lg">{$i18n.t('Meeting duration')}</span>
+							<span class="text-sm font-bold">{selectedMeeting.duration} {$i18n.t('minutes')}</span>
+						</div>
+					</div>
+
+					<div>
+						<span class="font-bold text-lg">{$i18n.t('Participants')}</span>
+						<div class="grid grid-cols-3 gap-2">
+							{#each selectedMeeting.participants as participant}
+								<span class="text-sm">{participant}</span>
+							{/each}
+						</div>
+					</div>
+
+					<div class="flex flex-col">
+						<span class="font-bold text-lg">{$i18n.t('Key points')}</span>
+						{#if selectedMeeting.summary.shorthand_bullet === ''}
+							<span class="text-sm">{$i18n.t('No key points available.')}</span>
+						{:else}
+							<span class="text-sm">{@html selectedMeeting.summary.shorthand_bullet}</span>
+						{/if}
+					</div>
+
+					<div class="flex flex-col">
+						<span class="font-bold text-lg">{$i18n.t('Meeting summary')}</span>
+						{#if selectedMeeting.summary.overview === ''}
+							<span class="text-sm">{$i18n.t('No summary available.')}</span>
+						{:else}
+							<span class="text-sm">{@html selectedMeeting.summary.overview}</span>
+						{/if}
+					</div>
+				</div>
+			</div>
+			{/if}
+		</div>
+	{/if}
+</div>

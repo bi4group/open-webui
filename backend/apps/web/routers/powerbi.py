@@ -1,12 +1,6 @@
-import logging
-
-from fastapi import Response, Request, APIRouter
+from fastapi import APIRouter
 
 from apps.web.classes.powerbi import PowerBi, EmbedConfigType
-from config import SRC_LOG_LEVELS, POWERBI_REPORT_ID, POWERBI_WORKSPACE_ID
-
-log = logging.getLogger(__name__)
-log.setLevel(SRC_LOG_LEVELS["POWERBI"])
 
 router = APIRouter()
 

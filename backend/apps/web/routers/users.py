@@ -138,3 +138,9 @@ async def delete_user_by_id(user_id: str, user=Depends(get_admin_user)):
         status_code=status.HTTP_403_FORBIDDEN,
         detail=ERROR_MESSAGES.ACTION_PROHIBITED,
     )
+
+
+# Get if the current user has a fireflies token
+@router.get("/fireflies/token", response_model=bool)
+async def current_user_has_fireflies_token(user=Depends(get_current_user)):
+    return user.fireflies_api_key is not None

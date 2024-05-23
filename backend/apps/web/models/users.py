@@ -25,6 +25,7 @@ class User(Model):
     created_at = BigIntegerField()
 
     api_key = CharField(null=True, unique=True)
+    fireflies_api_key = CharField(null=True)
 
     class Meta:
         database = DB
@@ -42,6 +43,7 @@ class UserModel(BaseModel):
     created_at: int  # timestamp in epoch
 
     api_key: Optional[str] = None
+    fireflies_api_key: Optional[str] = None
 
 
 ####################
@@ -190,12 +192,12 @@ class UsersTable:
         except:
             return False
 
-    def update_user_api_key_by_id(self, id: str, api_key: str) -> str:
+    def update_user_api_key_by_id(self, id: str, api_key: str) -> bool:
         try:
             query = User.update(api_key=api_key).where(User.id == id)
             result = query.execute()
 
-            return True if result == 1 else False
+            return result == 1
         except:
             return False
 
