@@ -651,9 +651,3 @@ POWERBI_REPORT_ID = os.environ.get("POWERBI_REPORT_ID", "")
 POWERBI_WORKSPACE_ID = os.environ.get("POWERBI_WORKSPACE_ID", "")
 POWERBI_CLIENT_ID = os.environ.get("POWERBI_CLIENT_ID", "")
 POWERBI_CLIENT_SECRET = os.environ.get("POWERBI_CLIENT_SECRET", "")
-
-
-####################################
-# Fireflies.ai
-####################################
-FIREFLIES_API_TOKEN = os.environ.get("FIREFLIES_API_TOKEN", "")
