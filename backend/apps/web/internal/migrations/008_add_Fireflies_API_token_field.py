@@ -36,9 +36,6 @@ with suppress(ImportError):
 
 def migrate(migrator: Migrator, database: pw.Database, *, fake=False):
     """Write your migrations here."""
-    
-    migrator.change_fields('chat', updated_at=pw.BigIntegerField(),
-        created_at=pw.BigIntegerField())
 
     migrator.add_fields(
         'user',
@@ -51,5 +48,3 @@ def rollback(migrator: Migrator, database: pw.Database, *, fake=False):
     
     migrator.remove_fields('user', 'fireflies_api_key')
 
-    migrator.change_fields('chat', updated_at=pw.DateTimeField(),
-        created_at=pw.DateTimeField())
