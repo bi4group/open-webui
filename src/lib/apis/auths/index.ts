@@ -134,7 +134,7 @@ export const addUser = async (
 	return res;
 };
 
-export const updateUserProfile = async (token: string, name: string, profileImageUrl: string) => {
+export const updateUserProfile = async (token: string, name: string, profileImageUrl: string, firefliesAPIKey: string) => {
 	let error = null;
 
 	const res = await fetch(`${WEBUI_API_BASE_URL}/auths/update/profile`, {
@@ -145,7 +145,8 @@ export const updateUserProfile = async (token: string, name: string, profileImag
 		},
 		body: JSON.stringify({
 			name: name,
-			profile_image_url: profileImageUrl
+			profile_image_url: profileImageUrl,
+			fireflies_api_key: firefliesAPIKey
 		})
 	})
 		.then(async (res) => {

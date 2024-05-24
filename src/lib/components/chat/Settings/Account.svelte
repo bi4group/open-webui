@@ -18,6 +18,7 @@
 
 	let profileImageUrl = '';
 	let name = '';
+	let firefliesAPIKey = '';
 
 	let showAPIKeys = false;
 
@@ -37,7 +38,7 @@
 			}
 		}
 
-		const updatedUser = await updateUserProfile(localStorage.token, name, profileImageUrl).catch(
+		const updatedUser = await updateUserProfile(localStorage.token, name, profileImageUrl, firefliesAPIKey).catch(
 			(error) => {
 				toast.error(error);
 			}
@@ -62,6 +63,7 @@
 	onMount(async () => {
 		name = $user.name;
 		profileImageUrl = $user.profile_image_url;
+		firefliesAPIKey = $user.fireflies_api_key;
 
 		APIKey = await getAPIKey(localStorage.token).catch((error) => {
 			console.log(error);
@@ -226,6 +228,25 @@
 							required
 						/>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<hr class=" dark:border-gray-700 my-4" />
+
+		<div class="pt-0.5">
+			<div class="flex flex-col w-full">
+				<div class=" mb-1 text-xs font-medium">{$i18n.t('Fireflies API Key')}</div>
+
+				<div class="flex-1">
+					<input
+						class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none"
+						type="text"
+						placeholder={$i18n.t('Enter your Fireflies.ai API key')}
+						bind:value={firefliesAPIKey}
+						required
+					/>
+					<span class="text-xs italic">{$i18n.t('We hide your tokens for privacy reasons')}</span>
 				</div>
 			</div>
 		</div>

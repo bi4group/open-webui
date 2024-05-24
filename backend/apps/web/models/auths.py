@@ -57,6 +57,7 @@ class UserResponse(BaseModel):
     name: str
     role: str
     profile_image_url: str
+    fireflies_api_key: Optional[str] = None
 
 
 class SigninResponse(Token, UserResponse):
@@ -75,6 +76,7 @@ class ProfileImageUrlForm(BaseModel):
 class UpdateProfileForm(BaseModel):
     profile_image_url: str
     name: str
+    fireflies_api_key: Optional[str]
 
 
 class UpdatePasswordForm(BaseModel):

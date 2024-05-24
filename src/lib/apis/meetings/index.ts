@@ -1,12 +1,13 @@
 import { WEBUI_API_BASE_URL } from '$lib/constants';
 
-export const getMeetingsList = async () => {
+export const getMeetingsList = async (token: string) => {
 	let error = null;
 
 	const res = await fetch(`${WEBUI_API_BASE_URL}/meetings`, {
 		method: 'GET',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`
 		}
 	})
 		.then(async (res) => {

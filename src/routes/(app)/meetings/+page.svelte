@@ -21,7 +21,7 @@
 				return
 			}
 
-			const res = await getMeetingsList();
+			const res = await getMeetingsList(localStorage.token);
 
 			if (res) {
 				meetingList = res.data.transcripts

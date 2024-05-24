@@ -50,6 +50,7 @@ async def get_session_user(user=Depends(get_current_user)):
         "name": user.name,
         "role": user.role,
         "profile_image_url": user.profile_image_url,
+        "fireflies_api_key": '*****' if user.fireflies_api_key else None
     }
 
 
@@ -65,9 +66,14 @@ async def update_profile(
     if session_user:
         user = Users.update_user_by_id(
             session_user.id,
-            {"profile_image_url": form_data.profile_image_url, "name": form_data.name},
+            {
+                "profile_image_url": form_data.profile_image_url,
+                "name": form_data.name,
+                "fireflies_api_key": form_data.fireflies_api_key
+            },
         )
         if user:
+            user.fireflies_api_key = '*****' if user.fireflies_api_key else None
             return user
         else:
             raise HTTPException(400, detail=ERROR_MESSAGES.DEFAULT())
