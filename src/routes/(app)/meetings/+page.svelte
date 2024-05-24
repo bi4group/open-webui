@@ -3,7 +3,6 @@
 	import { WEBUI_NAME, user } from '$lib/stores';
 	import { getContext, onMount } from 'svelte';
 	import { getMeetingsList } from '$lib/apis/meetings';
-	import { getCurrentUserFirefliesToken } from '$lib/apis/users';
 
 	const i18n = getContext('i18n');
 
@@ -11,72 +10,44 @@
 	let selectedMeeting = '';
 	let api_error = false;
 	let missing_token = false;
+	let loading = true;
 
 	onMount(async () => {
-		try {
-			const has_token = await getCurrentUserFirefliesToken(localStorage.token);
-
-			if (!has_token) {
-				missing_token = true
-				return
-			}
-
-			const res = await getMeetingsList(localStorage.token);
-
-			if (res) {
-				meetingList = res.data.transcripts
-				selectedMeeting = res.data.transcripts[0]
-
-				// Format the date of each meeting
-				meetingList.forEach((meeting) => {
-					const date = new Date(meeting.dateString)
-					meeting.dateString = date.toLocaleDateString(i18n.locale, {
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric',
-						hour: 'numeric',
-						minute: 'numeric'
-					})
-				})
-
-				// The summary overview comes as markdown, so we need to convert it to HTML
-				meetingList.forEach((meeting) => {
-					// Replace newlines with <br> tags
-					meeting.summary.overview = meeting.summary.overview.replace(/\n/g, '<br/>')
-					meeting.summary.shorthand_bullet = meeting.summary.shorthand_bullet.replace(/\n/g, '<br/>')
-
-					// Set options for marked
-					marked.use({
-						gfm: true,
-						breaks: true
-					})
-
-					meeting.summary.overview = marked(meeting.summary.overview)
-					meeting.summary.shorthand_bullet = marked(meeting.summary.shorthand_bullet)
-
-					// Obviously the API wouldn't return the participants in a proper format, so we have
-					// to do funky things ourselves
-					// The first string always contains a list of participants, so first of all let's split it
-					const participants = meeting.participants[0].split(',')
-
-					// Preserve unique participants
-					meeting.participants = new Set([...participants, ...meeting.participants.slice(1)])
-				})
-			}
-		} catch (error) {
-			console.log(error)
-			api_error = true
-		}
-	});
-
-	const getMeetingDetails = async (meeting) => {
-		try {
-			selectedMeeting = meeting
-			console.log(meeting)
-		} catch (error) {
-			api_error = true
-		}
+	if ($user && $user.fireflies_api_key == null) {
+		missing_token = true;
+		loading = false;
+		return;
 	}
+
+	try {
+		const res = await getMeetingsList(localStorage.token);
+
+		if (res) {
+			meetingList = res.data.transcripts;
+			selectedMeeting = res.data.transcripts[0];
+			loading = false;
+
+			meetingList.forEach((meeting) => {
+				meeting.dateString = new Date(meeting.dateString).toLocaleDateString(i18n.locale, {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: 'numeric',
+					minute: 'numeric'
+				});
+
+				meeting.summary.overview = marked(meeting.summary.overview.replace(/\n/g, '<br/>'));
+				meeting.summary.shorthand_bullet = marked(meeting.summary.shorthand_bullet.replace(/\n/g, '<br/>'));
+
+				meeting.participants = new Set(meeting.participants[0].split(',').concat(meeting.participants.slice(1)));
+			});
+		}
+	} catch (error) {
+		console.log(error);
+		api_error = true;
+		loading = false;
+	}
+});
 </script>
 
 <svelte:head>
@@ -94,13 +65,19 @@
 				<h1 class="text-3xl font-bold">{$i18n.t('Meetings')}</h1>
 			</div>
 
+			{#if loading}
+				<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
+					<p>{$i18n.t('Loading results...')}</p>
+				</div>
+			{/if}
+
 			{#if api_error}
 				<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
 					<p>{$i18n.t('An error occurred while fetching the meetings list.')}</p>
 				</div>
 			{/if}
 
-			{#if !api_error && meetingList.length === 0}
+			{#if !api_error && !loading && meetingList.length === 0}
 				<div class="max-w-8xl mx-auto w-full px-3 md:px-0 mt-10">
 					<p>{$i18n.t('No meetings found.')}</p>
 				</div>
@@ -112,7 +89,7 @@
 							<button
 								class="text-lg text-start font-bold rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
 								on:click={() => {
-									getMeetingDetails(meeting)
+									selectedMeeting = meeting
 								}}
 							>{meeting.title}</button>
 					{/each}
