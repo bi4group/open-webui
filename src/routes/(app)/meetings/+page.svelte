@@ -40,6 +40,12 @@
 				meeting.summary.shorthand_bullet = marked(meeting.summary.shorthand_bullet.replace(/\n/g, '<br/>'));
 
 				meeting.participants = new Set(meeting.participants[0].split(',').concat(meeting.participants.slice(1)));
+
+				// Set the meeting organizer as the first participant, if found
+				if (meeting.participants.has(meeting.organizer_email)) {
+					meeting.participants.delete(meeting.organizer_email);
+					meeting.participants = [meeting.organizer_email, ...meeting.participants];
+				}
 			});
 		}
 	} catch (error) {
@@ -87,11 +93,15 @@
 				<div class="flex flex-col gap-2 w-fit px-3 md:px-0 mt-3">
 					{#each meetingList as meeting}
 							<button
-								class="text-lg text-start font-bold rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
+								class="flex flex-col text-lg text-start rounded-xl px-3.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900"
+								class:bg-gray-200={selectedMeeting === meeting}
 								on:click={() => {
 									selectedMeeting = meeting
 								}}
-							>{meeting.title}</button>
+							>
+								<span class="font-bold">{meeting.title}</span>
+								<span class="text-xs">{meeting.dateString}</span>
+							</button>
 					{/each}
 				</div>
 			{/if}
@@ -106,7 +116,7 @@
 				</div>
 
 				<div class="flex flex-col mt-5 gap-7 pb-12 pr-12">
-					<div class="flex flex-row gap-20">
+					<div class="flex flex-row gap-24">
 						<div class="flex flex-col">
 							<span class="text-lg">{$i18n.t('Date')}</span>
 							<span class="text-sm font-bold">{selectedMeeting.dateString}</span>
@@ -121,7 +131,11 @@
 						<span class="font-bold text-lg">{$i18n.t('Participants')}</span>
 						<div class="grid grid-cols-3 gap-2">
 							{#each selectedMeeting.participants as participant}
-								<span class="text-sm">{participant}</span>
+								{#if participant === selectedMeeting.organizer_email}
+									<span class="text-sm font-bold">{participant} ({$i18n.t('organizer')})</span>
+								{:else}
+									<span class="text-sm">{participant}</span>
+								{/if}
 							{/each}
 						</div>
 					</div>

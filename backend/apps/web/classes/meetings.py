@@ -29,7 +29,7 @@ class MeetingService:
         }
 
         data = ('{"query": "query Transcripts($userId: String) { transcripts(user_id: $userId) { title id dateString '
-                'duration summary { action_items overview shorthand_bullet  } participants } }"}')
+                'duration summary { action_items overview shorthand_bullet  } participants organizer_email } }"}')
 
         response = requests.post(API_URL, headers=auth_header, data=data)
 
