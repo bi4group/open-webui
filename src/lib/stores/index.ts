@@ -143,4 +143,5 @@ type SessionUser = {
 	name: string;
 	role: string;
 	profile_image_url: string;
+	fireflies_api_key: string;
 };

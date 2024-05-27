@@ -1,12 +1,8 @@
 from fastapi import Response, Request
 from fastapi import Depends, FastAPI, HTTPException, status
-from datetime import datetime, timedelta
-from typing import List, Union, Optional
+from typing import List, Optional
 
 from fastapi import APIRouter
-from pydantic import BaseModel
-import time
-import uuid
 import logging
 
 from apps.web.models.users import UserModel, UserUpdateForm, UserRoleUpdateForm, Users
