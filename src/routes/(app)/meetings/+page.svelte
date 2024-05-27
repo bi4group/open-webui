@@ -44,8 +44,8 @@
 				// Set the meeting organizer as the first participant, if found
 				if (meeting.participants.has(meeting.organizer_email)) {
 					meeting.participants.delete(meeting.organizer_email);
-					meeting.participants = [meeting.organizer_email, ...meeting.participants];
 				}
+				meeting.participants = [meeting.organizer_email, ...meeting.participants];
 			});
 		}
 	} catch (error) {
